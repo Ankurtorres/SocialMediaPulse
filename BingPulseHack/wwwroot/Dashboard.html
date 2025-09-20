@@ -72,6 +72,27 @@
     <title>Trending Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* Dashboard refresh indicator */
+        .dashboard-refresh {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e8f7e2;
+            color: #219654;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(33, 150, 84, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
         body {
             background: #f5f7fb;
             font-family: 'Segoe UI', 'Arial', sans-serif;
@@ -280,6 +301,7 @@
     </style>
 </head>
 <body>
+    <div class="dashboard-refresh">Refreshing dashboard...</div>
     <div class="container">
         <!-- Left Panel -->
         <div class="left-panel">
@@ -555,11 +577,39 @@
 </style>
 
 <script>
+// Auto-refresh configuration
+const AUTO_REFRESH_INTERVAL = 30000; // 30 seconds
+let autoRefreshTimer;
+
 document.addEventListener('DOMContentLoaded', function () {
+    // Search functionality
     const suggestionButtons = document.querySelectorAll('.footer-suggestion');
     const searchInput = document.querySelector('.footer-input');
     const sendBtn = document.querySelector('.footer-send-btn');
     const errorContainer = document.getElementById('errorContainer');
+
+    // Dashboard elements
+    const trendingList = document.querySelector('.trending-list');
+    const featuredPost = document.querySelector('.featured-post');
+    const contributorsList = document.querySelector('.contributors-list');
+    const activityList = document.querySelector('.activity-list');
+
+    // Utility functions for data handling
+    function formatNumber(num) {
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
+    }
+
+    function getSentimentClass(sentiment) {
+        const sentimentMap = {
+            'positive': 'positive',
+            'negative': 'negative',
+            'neutral': 'neutral'
+        };
+        return sentimentMap[sentiment.toLowerCase()] || 'neutral';
+    }
 
     function showError(message) {
         errorContainer.textContent = message;
@@ -568,6 +618,129 @@ document.addEventListener('DOMContentLoaded', function () {
             errorContainer.style.display = 'none';
         }, 5000);
     }
+
+    // Load and render dashboard data
+    async function loadDashboardData() {
+        const refreshIndicator = document.querySelector('.dashboard-refresh');
+        try {
+            refreshIndicator.style.display = 'block';
+            const response = await fetch('/data/output-2.json');
+            if (!response.ok) {
+                throw new Error('Failed to load dashboard data');
+            }
+            const data = await response.json();
+            renderDashboard(data);
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+            showError('Error loading dashboard data');
+        } finally {
+            setTimeout(() => {
+                refreshIndicator.style.display = 'none';
+            }, 1000); // Hide after 1 second to ensure visibility
+        }
+    }
+
+    function renderDashboard(data) {
+        // Render trending topics
+        if (data.topics_summary && trendingList) {
+            trendingList.innerHTML = data.topics_summary.map(topic => `
+                <li>
+                    <span class="topic-details">
+                        <span class="topic-title">${topic.topic}</span>
+                        <span class="topic-posts">${formatNumber(topic.post_count)} posts</span>
+                    </span>
+                    <span>
+                        <span class="chip ${getSentimentClass(topic.sentiment)}">${topic.sentiment}</span>
+                        <span class="trend-change ${topic.trend_direction}">${topic.trend_percentage}%</span>
+                    </span>
+                </li>
+            `).join('');
+        }
+
+        // Render featured post
+        if (data.featured_posts && featuredPost) {
+            const post = data.featured_posts;
+            featuredPost.innerHTML = `
+                <span class="contributor-name">${post.author.name}</span>
+                <span class="contributor-handle">${post.author.handle}</span>
+                <span class="chip positive" style="margin-left:10px;">${post.topic}</span>
+                <div class="featured-main" style="margin-top:7px;">
+                    ${post.content}
+                </div>
+                <div class="post-meta">
+                    ${post.metrics.time} &mdash; ${formatNumber(post.metrics.likes)} likes &bull;
+                    ${formatNumber(post.metrics.comments)} comments &bull;
+                    ${formatNumber(post.metrics.shares)} shares
+                </div>
+            `;
+        }
+
+        // Render top contributors
+        if (data.top_contributors && contributorsList) {
+            contributorsList.innerHTML = data.top_contributors.map(contributor => `
+                <li>
+                    <div class="contributor-details">
+                        <span class="contributor-name">${contributor.name}</span>
+                        <span class="contributor-handle">${contributor.handle}</span>
+                    </div>
+                    <span class="contributor-extra">
+                        ${formatNumber(contributor.followers)} followers &middot; ${contributor.posts} posts
+                    </span>
+                    <span class="engagement">${contributor.engagement}% engagement</span>
+                </li>
+            `).join('');
+        }
+
+        // Render platform activity
+        if (data.sources_dict && activityList) {
+            activityList.innerHTML = Object.entries(data.sources_dict).map(([platform, count]) => `
+                <li>
+                    <span class="activity-platform">${platform}</span>
+                    <span class="activity-count">${formatNumber(count)} posts</span>
+                </li>
+            `).join('');
+        }
+    }
+
+    // Load dashboard data on page load
+    // Initial load
+    loadDashboardData();
+    
+    // Setup auto-refresh with debouncing
+    let refreshTimeout;
+    function debouncedRefresh() {
+        if (refreshTimeout) {
+            clearTimeout(refreshTimeout);
+        }
+        refreshTimeout = setTimeout(() => {
+            loadDashboardData();
+        }, 1000); // Wait 1 second before refreshing
+    }
+    
+    startAutoRefresh();
+    
+    function startAutoRefresh() {
+        // Clear any existing timer
+        if (autoRefreshTimer) {
+            clearInterval(autoRefreshTimer);
+        }
+        
+        // Set up new timer
+        autoRefreshTimer = setInterval(() => {
+            loadDashboardData();
+        }, AUTO_REFRESH_INTERVAL);
+    }
+
+    // Stop auto-refresh when tab is not visible
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            clearInterval(autoRefreshTimer);
+        } else {
+            startAutoRefresh();
+            loadDashboardData(); // Immediate refresh when tab becomes visible
+        }
+    });
+
     const plusBtn = document.querySelector('.footer-plus-btn');
 
     plusBtn.addEventListener('click', () => {
@@ -579,7 +752,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         // Call your existing performSearch function to trigger API call
         performSearch(query);
-        // Optionally clear input or provide feedback as needed
+        debouncedRefresh(); // Refresh dashboard after adding suggestion
     });
 
     // Show send button only when input is filled

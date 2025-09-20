@@ -1,0 +1,91 @@
+{
+  "topics_summary": [
+    {
+      "topic": "Artificial Intelligence",
+      "post_count": 12800,
+      "sentiment": "positive",
+      "trend_percentage": 34.5,
+      "trend_direction": "up"
+    },
+    {
+      "topic": "Climate Change",
+      "post_count": 8900,
+      "sentiment": "neutral",
+      "trend_percentage": 12.3,
+      "trend_direction": "up"
+    },
+    {
+      "topic": "Electric Vehicles",
+      "post_count": 6800,
+      "sentiment": "positive",
+      "trend_percentage": 45.2,
+      "trend_direction": "up"
+    },
+    {
+      "topic": "Cryptocurrency",
+      "post_count": 15600,
+      "sentiment": "negative",
+      "trend_percentage": 8.7,
+      "trend_direction": "down"
+    },
+    {
+      "topic": "Space Exploration",
+      "post_count": 4600,
+      "sentiment": "positive",
+      "trend_percentage": 23.1,
+      "trend_direction": "up"
+    }
+  ],
+  "featured_posts": {
+    "author": {
+      "name": "Dr. Sarah Chen",
+      "handle": "@ai_researcher"
+    },
+    "topic": "Artificial Intelligence",
+    "content": "The latest breakthrough in transformer architecture shows 23% improvement in reasoning tasks. This could revolutionize how we approach AI safety and reliability. #AI #MachineLearning",
+    "metrics": {
+      "time": "2 hours ago",
+      "likes": 1300,
+      "comments": 489,
+      "shares": 156
+    }
+  },
+  "top_contributors": [
+    {
+      "name": "Dr. Sarah Chen",
+      "handle": "@ai_researcher",
+      "followers": 125000,
+      "posts": 12,
+      "engagement": 8.5
+    },
+    {
+      "name": "ClimateScientist",
+      "handle": "u/climatescientist",
+      "followers": 89000,
+      "posts": 8,
+      "engagement": 12.3
+    },
+    {
+      "name": "Space Today",
+      "handle": "@spacetoday",
+      "followers": 234000,
+      "posts": 5,
+      "engagement": 6.7
+    },
+    {
+      "name": "Tech Insider",
+      "handle": "@techinsider",
+      "followers": 67000,
+      "posts": 15,
+      "engagement": 9.2
+    }
+  ],
+  "sources_dict": {
+    "Twitter": 2800,
+    "Reddit": 1600,
+    "LinkedIn": 892,
+    "TikTok": 1000,
+    "Instagram": 567,
+    "YouTube": 389
+  }
+}
