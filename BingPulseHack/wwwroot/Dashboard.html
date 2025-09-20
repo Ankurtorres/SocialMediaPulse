@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+<!-- Bing Header Start -->
+<style>
+    .dashboard-header {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        padding: 0 32px;
+        min-height: 56px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .bing-logo {
+        flex: 1 1 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .header-main {
+        flex: 2 1 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .header-nav {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        margin: 0;
+    }
+
+    .header-signin-btn {
+        margin-left: auto;
+        background: #f6f6f6;
+        color: #4285F4;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 18px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid #e2e2e2;
+    }
+</style>
+
+<div class="dashboard-header">
+    <div class="bing-logo">
+        <span class="logo-square"></span>
+        Microsoft Bing
+    </div>
+    <div class="header-main">
+        <nav class="header-nav">
+            <a href="#">All</a>
+            <a href="#">Search</a>
+            <a href="#">Images</a>
+            <a href="#">Videos</a>
+            <a href="#">Maps</a>
+            <a href="#">News</a>
+            <a href="#">Shopping</a>
+            <a href="#">More :</a>
+        </nav>
+    </div>
+    <button class="header-signin-btn">Sign in</button>
+</div>
+<!-- Bing Header End -->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trending Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 40px auto;
+            display: flex;
+            gap: 30px;
+        }
+
+        .left-panel {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .right-panel {
+            flex: 1.1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 18px rgba(27,44,99,0.08);
+            padding: 28px 32px 28px 32px;
+        }
+
+            .card h3 {
+                margin-top: 0;
+                font-size: 1.25rem;
+                color: #1e2552;
+            }
+
+        .trending-list, .contributors-list, .activity-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .trending-list li, .contributors-list li {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 18px 0;
+                border-bottom: 1px solid #f0f0f4;
+                transition: background 0.2s;
+            }
+
+                .trending-list li:last-child,
+                .contributors-list li:last-child {
+                    border-bottom: none;
+                }
+
+        .topic-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topic-title {
+            font-weight: 600;
+            font-size: 1.07rem;
+            color: #212b50;
+            margin-bottom: 3px;
+        }
+
+        .topic-posts {
+            font-size: 0.96rem;
+            color: #6c7393;
+            margin-bottom: 5px;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 14px;
+            font-size: 0.91rem;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+
+        .positive {
+            background: #e8f7e2;
+            color: #219654;
+        }
+
+        .negative {
+            background: #ffeaea;
+            color: #ce3a2a;
+        }
+
+        .neutral {
+            background: #e4eaf7;
+            color: #4460a0;
+        }
+
+        .trend-change {
+            font-weight: 600;
+            font-size: 0.97rem;
+            margin-left: 9px;
+        }
+
+        .up {
+            color: #21ad62;
+        }
+
+        .down {
+            color: #ce3a2a;
+        }
+        /* Contributors */
+        .contributors-list li {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .contributor-details {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 4px;
+        }
+
+        .contributor-name {
+            font-weight: 600;
+            color: #1a1d2b;
+            font-size: 1.05rem;
+        }
+
+        .contributor-handle {
+            font-size: 0.95rem;
+            color: #55607a;
+            margin-left: 8px;
+        }
+
+        .contributor-extra {
+            font-size: 0.93rem;
+            color: #848793;
+        }
+
+        .engagement {
+            background: #fff8ea;
+            color: #e2a75d;
+            border-radius: 11px;
+            font-size: 0.89rem;
+            margin-left: 8px;
+            padding: 3px 10px;
+        }
+        /* Featured Post */
+        .featured-post {
+            background: #f4f8fc;
+            border-radius: 12px;
+            padding: 22px 25px;
+            margin-top: 8px;
+        }
+
+        .featured-main {
+            font-size: 1.03rem;
+            margin-bottom: 13px;
+        }
+
+        .post-meta {
+            font-size: 0.89rem;
+            color: #98a2b3;
+            margin-top: 8px;
+        }
+        /* Platform Activity */
+        .activity-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f4;
+            font-size: 1rem;
+        }
+
+            .activity-list li:last-child {
+                border-bottom: none;
+            }
+
+        .activity-platform {
+            color: #3859bc;
+            font-weight: 600;
+        }
+
+        .activity-count {
+            color: #21ad62;
+            font-weight: 500;
+        }
+
+        @media (max-width: 1000px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .right-panel {
+                flex: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <div class="card">
+                <h3>Trending Topics</h3>
+                <ul class="trending-list">
+                    <li>
+                        <span class="topic-details">
+                            <span class="topic-title">Artificial Intelligence</span>
+                            <span class="topic-posts">12.8K posts</span>
+                        </span>
+                        <span>
+                            <span class="chip positive">positive</span>
+                            <span class="trend-change up">&#8593; 34.5%</span>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="topic-details">
+                            <span class="topic-title">Climate Change</span>
+                            <span class="topic-posts">8.9K posts</span>
+                        </span>
+                        <span>
+                            <span class="chip neutral">neutral</span>
+                            <span class="trend-change up">&#8593; 12.3%</span>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="topic-details">
+                            <span class="topic-title">Electric Vehicles</span>
+                            <span class="topic-posts">6.8K posts</span>
+                        </span>
+                        <span>
+                            <span class="chip positive">positive</span>
+                            <span class="trend-change up">&#8593; 45.2%</span>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="topic-details">
+                            <span class="topic-title">Cryptocurrency</span>
+                            <span class="topic-posts">15.6K posts</span>
+                        </span>
+                        <span>
+                            <span class="chip negative">negative</span>
+                            <span class="trend-change down">&#8595; 8.7%</span>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="topic-details">
+                            <span class="topic-title">Space Exploration</span>
+                            <span class="topic-posts">4.6K posts</span>
+                        </span>
+                        <span>
+                            <span class="chip positive">positive</span>
+                            <span class="trend-change up">&#8593; 23.1%</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Featured Posts</h3>
+                <div class="featured-post">
+                    <span class="contributor-name">Dr. Sarah Chen</span>
+                    <span class="contributor-handle">@ai_researcher</span>
+                    <span class="chip positive" style="margin-left:10px;">Artificial Intelligence</span>
+                    <div class="featured-main" style="margin-top:7px;">
+                        The latest breakthrough in transformer architecture shows 23% improvement in reasoning tasks. This could revolutionize how we approach AI safety and reliability. #AI #MachineLearning
+                    </div>
+                    <div class="post-meta">2 hours ago &mdash; 1.3K likes &bull; 489 comments &bull; 156 shares</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="card">
+                <h3>Top Contributors</h3>
+                <ul class="contributors-list">
+                    <li>
+                        <div class="contributor-details">
+                            <span class="contributor-name">Dr. Sarah Chen</span>
+                            <span class="contributor-handle">@ai_researcher</span>
+                        </div>
+                        <span class="contributor-extra">125.0K followers &middot; 12 posts</span>
+                        <span class="engagement">8.5% engagement</span>
+                    </li>
+                    <li>
+                        <div class="contributor-details">
+                            <span class="contributor-name">ClimateScientist</span>
+                            <span class="contributor-handle">u/climatescientist</span>
+                        </div>
+                        <span class="contributor-extra">89.0K followers &middot; 8 posts</span>
+                        <span class="engagement">12.3% engagement</span>
+                    </li>
+                    <li>
+                        <div class="contributor-details">
+                            <span class="contributor-name">Space Today</span>
+                            <span class="contributor-handle">@spacetoday</span>
+                        </div>
+                        <span class="contributor-extra">234.0K followers &middot; 5 posts</span>
+                        <span class="engagement">6.7% engagement</span>
+                    </li>
+                    <li>
+                        <div class="contributor-details">
+                            <span class="contributor-name">Tech Insider</span>
+                            <span class="contributor-handle">@techinsider</span>
+                        </div>
+                        <span class="contributor-extra">67.0K followers &middot; 15 posts</span>
+                        <span class="engagement">9.2% engagement</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Platform Activity</h3>
+                <ul class="activity-list">
+                    <li>
+                        <span class="activity-platform">Twitter</span>
+                        <span class="activity-count">2.8K posts</span>
+                    </li>
+                    <li>
+                        <span class="activity-platform">Reddit</span>
+                        <span class="activity-count">1.6K posts</span>
+                    </li>
+                    <li>
+                        <span class="activity-platform">LinkedIn</span>
+                        <span class="activity-count">892 posts</span>
+                    </li>
+                    <li>
+                        <span class="activity-platform">TikTok</span>
+                        <span class="activity-count">1.0K posts</span>
+                    </li>
+                    <li>
+                        <span class="activity-platform">Instagram</span>
+                        <span class="activity-count">567 posts</span>
+                    </li>
+                    <li>
+                        <span class="activity-platform">YouTube</span>
+                        <span class="activity-count">389 posts</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<footer class="dashboard-footer">
+    <div class="footer-suggestions">
+        <button class="footer-suggestion">
+            <span class="suggest-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Bing_Favicon.svg" alt="" />
+            </span>
+            The history of the word "Hello"
+        </button>
+        <button class="footer-suggestion">
+            <span class="suggest-img">
+                <img src="https://img.icons8.com/color/24/000000/language.png" alt="" />
+            </span>
+            How to say "Hello" in different languages?
+        </button>
+        <button class="footer-suggestion">
+            <span class="suggest-img">
+                <img src="https://img.icons8.com/color/24/000000/globe--v2.png" alt="" />
+            </span>
+            Fun facts about greetings worldwide
+        </button>
+    </div>
+    <div class="footer-followup">
+        <img class="footer-icon" src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Bing_Favicon.svg" alt="Bing Icon" />
+        <input type="text" class="footer-input" placeholder="Ask a follow-up" aria-label="Search query" />
+        <button type="button" class="footer-send-btn" title="Send" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="#fff" width="24" height="24" style="background:#4285F4;border-radius:50%;padding:4px;box-shadow:0 2px 8px #4285f42a;">
+                <path d="M2 21l21-9-21-9v7l15 2-15 2z"/>
+            </svg>
+        </button>
+        <span class="search-loading">Searching...</span>
+        <button type="button" class="footer-plus-btn" title="Add suggestion">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                <circle cx="13" cy="13" r="13" fill="#f9e3cd"/>
+                <rect x="7" y="12" width="12" height="2" rx="1" fill="#e3a557"/>
+                <rect x="12" y="7" width="2" height="12" rx="1" fill="#e3a557"/>
+            </svg>
+        </button>
+    </div>
+</footer>
+
+<style>
+.dashboard-footer {
+    position: fixed; left: 0; bottom: 0; width: 100vw; z-index: 1000;
+    background: #fefaf6; border-top-left-radius: 26px; border-top-right-radius: 26px;
+    box-shadow: 0 -12px 48px #eec9a6a0, 0 -1.5px 0 #faf2eb inset;
+    display: flex; flex-direction: column; align-items: center; padding: 18px 0 24px 0;
+}
+.footer-suggestions {
+    display: flex; gap: 14px; margin-bottom: 15px;
+}
+.footer-suggestion {
+    background: #ffe7cd;
+    color: #b47431;
+    padding: 10px 24px 10px 42px;
+    font-size: 1.08rem;
+    border-radius: 19px;
+    box-shadow: 0 3px 9px rgba(250,197,132,0.07);
+    border: none; cursor: pointer;
+    position: relative; min-width: 170px;
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 500;
+    transition: box-shadow .2s;
+}
+.footer-suggestion:hover { box-shadow: 0 8px 24px #ffcf9b2e; background: #ffe2b3;}
+.suggest-img { position: absolute; left: 13px; top: 50%; transform: translateY(-50%);}
+.suggest-img img { width: 21px; height: 21px; border-radius: 50%; box-shadow: 0 2px 8px #f6b97136;}
+.footer-followup {
+    display: flex; align-items: center; gap: 14px; background: #fffaf3;
+    padding: 10px 22px 10px 10px; border-radius: 22px;
+    box-shadow: 0 2px 18px #eec37812;
+    font-size: 1.1rem; color: #8d8884; width: 500px; max-width: 99vw;
+    position: relative;
+}
+
+.search-loading {
+    position: absolute;
+    right: 70px;
+    color: #bd6e31;
+    font-size: 0.9rem;
+    display: none;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+.footer-icon {
+    width: 28px; height: 28px; margin-right: 5px;
+}
+    .footer-input {
+        flex: 1;
+        border: 2px solid #f0dab2;
+        background: #fffdf8;
+        font-size: 1.13rem;
+        color: #414141;
+        border-radius: 10px;
+        padding: 10px 12px;
+        outline: none;
+        transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+        box-shadow: 0 1.5px 6px rgba(232,181,118,0.07);
+    }
+
+        .footer-input:focus {
+            border-color: #f9ba59;
+            background: #fff7eb;
+            box-shadow: 0 2.5px 12px rgba(243,184,110,0.13);
+        }
+
+        .footer-input::placeholder {
+            color: #c8bca6;
+        }
+
+.footer-send-btn {
+    display: none;
+    border: none; background: none; padding: 0 8px;
+    margin-left: 5px; cursor: pointer;
+    position: relative; top: 1px;
+    transition: transform 0.1s;
+}
+.footer-send-btn.visible { display: block; }
+.footer-plus-btn {
+    border: none; background: none; cursor: pointer; padding: 0 3px;
+    margin-left: 7px; transition: transform 0.2s;
+}
+.footer-plus-btn:hover { transform: scale(1.13);}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const suggestionButtons = document.querySelectorAll('.footer-suggestion');
+    const searchInput = document.querySelector('.footer-input');
+    const sendBtn = document.querySelector('.footer-send-btn');
+    const errorContainer = document.getElementById('errorContainer');
+
+    function showError(message) {
+        errorContainer.textContent = message;
+        errorContainer.style.display = 'block';
+        setTimeout(() => {
+            errorContainer.style.display = 'none';
+        }, 5000);
+    }
+    const plusBtn = document.querySelector('.footer-plus-btn');
+
+    plusBtn.addEventListener('click', () => {
+        const input = document.querySelector('.footer-input');
+        const query = input.value.trim();
+        if (!query) {
+            alert('Please enter a query before adding a suggestion.');
+            return;
+        }
+        // Call your existing performSearch function to trigger API call
+        performSearch(query);
+        // Optionally clear input or provide feedback as needed
+    });
+
+    // Show send button only when input is filled
+    searchInput.addEventListener('input', function () {
+        sendBtn.classList.toggle('visible', this.value.trim().length > 0);
+    });
+
+    // Search on Enter
+    searchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+            sendBtn.click();
+        }
+    });
+
+    // Search on send button click
+    sendBtn.addEventListener('click', function () {
+        const query = searchInput.value.trim();
+        if (query) {
+            performSearch(query);
+            searchInput.value = '';
+            sendBtn.classList.remove('visible');
+        }
+    });
+
+    // On suggestion click: fill input, show send
+    suggestionButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const query = this.innerText.trim();
+            searchInput.value = query;
+            sendBtn.classList.add('visible');
+            performSearch(query); // Immediately perform search for suggestions
+            searchInput.focus();
+        });
+    });
+
+    const loadingIndicator = document.querySelector('.search-loading');
+
+    async function performSearch(query) {
+        try {
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            searchInput.disabled = true;
+            sendBtn.disabled = true;
+
+            console.log('Initiating search for query:', query);
+            
+            const requestBody = { query: query };
+            console.log('Request body:', requestBody);
+
+            const response = await fetch('/api/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            console.log('Response status:', response.status);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+            const data = await response.text();
+            console.log('Raw response data:', data);
+
+            try {
+                const jsonData = JSON.parse(data);
+                console.log('Parsed JSON data:', jsonData);
+
+                if (!response.ok) {
+                    const errorMessage = jsonData.error || 'Error from server: ' + response.status;
+                    console.error('Search error:', errorMessage);
+                    showError(errorMessage);
+                    return;
+                }
+
+                // Log successful search results
+                console.log('Search successful. Results:', jsonData);
+            } catch (parseError) {
+                console.error('JSON parse error:', parseError);
+                console.error('Raw response that failed to parse:', data);
+                showError('Invalid response format from server. Check console for details.');
+            }
+        } catch (error) {
+            console.error('Network or fetch error:', error);
+            showError('Network error occurred while searching. Check console for details.');
+        } finally {
+            // Hide loading indicator and re-enable input
+            loadingIndicator.style.display = 'none';
+            searchInput.disabled = false;
+            sendBtn.disabled = false;
+            searchInput.focus();
+        }
+    }
+});
+</script>
+
+<!-- Error container stays after everything -->
+<div id="errorContainer" style="display: none; position: fixed; top: 20px; right: 20px; background-color: #ffeaea; color: #ce3a2a; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 300px;"></div>
